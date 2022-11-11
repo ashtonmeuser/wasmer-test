@@ -25,6 +25,6 @@ env.Append(CPPPATH=['.', wasmer_path + 'include/'])
 env.Append(LIBPATH=[wasmer_path + 'lib/'])
 env.Append(LIBS=['wasmer'])
 
-sources = Glob('*.c')
+sources = Glob('*.cpp')
 
 env.SharedLibrary(target='build/wasmer-test', source=sources)
