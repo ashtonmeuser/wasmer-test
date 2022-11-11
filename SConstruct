@@ -15,6 +15,9 @@ elif platform == 'darwin':
   wasmer_platform_source = 'wasmer-darwin-amd64'
 elif platform == 'win32':
   wasmer_platform_source = 'wasmer-windows-amd64'
+  env.Append(CPPDEFINES=['WIN32', '_WIN32', '_WINDOWS', '_CRT_SECURE_NO_WARNINGS'])
+  env.Append(CCFLAGS=['-W3', '-GR'])
+  env.Append(CXXFLAGS='/std:c++latest')
 else:
   sys.exit(1)
 
