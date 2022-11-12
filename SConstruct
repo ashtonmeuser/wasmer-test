@@ -17,7 +17,8 @@ elif platform == 'win32':
   wasmer_platform_source = 'wasmer-windows-amd64'
   env.Append(CPPDEFINES=['WIN32', '_WIN32', '_WINDOWS', '_CRT_SECURE_NO_WARNINGS'])
   env.Append(CCFLAGS=['-W3', '-GR'])
-  env.Append(CXXFLAGS='/std:c++latest')
+  env.Append(CXXFLAGS=['/std:c++latest'])
+  env.Append(LIBS=['bcrypt', 'userenv', 'ws2_32', 'advapi32.lib'])
 else:
   sys.exit(1)
 
