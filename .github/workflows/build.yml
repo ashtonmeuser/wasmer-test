@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [master]
+    branches: [master, scratch]
   workflow_dispatch:
     inputs:
       debug_enabled:
