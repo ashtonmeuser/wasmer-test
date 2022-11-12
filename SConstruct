@@ -5,6 +5,7 @@ from distutils.dir_util import copy_tree, remove_tree
 env = DefaultEnvironment()
 
 wasmer_path = 'wasmer/'
+wasmer_version = '3.0.0-rc.2'
 platform = env['PLATFORM']
 
 print('Platform:', platform)
@@ -23,7 +24,7 @@ else:
   sys.exit(1)
 
 if os.path.exists(wasmer_path): remove_tree(wasmer_path)
-copy_tree(wasmer_platform_source, wasmer_path)
+copy_tree(os.path.join(wasmer_version, wasmer_platform_source), wasmer_path)
 
 env.Append(CPPPATH=['.', wasmer_path + 'include/'])
 env.Append(LIBPATH=[wasmer_path + 'lib/'])
