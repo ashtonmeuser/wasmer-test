@@ -3,23 +3,30 @@ import sys
 from distutils.dir_util import copy_tree, remove_tree
 from utils import download_wasmer, WASMER_VER_DEFAULT
 
-env = DefaultEnvironment()
-platform = env['PLATFORM']
+# Initial options inheriting from CLI args
+opts = Variables([], ARGUMENTS)
 
-print('Platform:', platform)
+# Define options
+opts.Add(EnumVariable("wasm_runtime", "Wasm runtime used", "wasmer", ["wasmer", "wasmtime"]))
+opts.Add(BoolVariable("download_runtime", "(Re)download runtime library", "no"))
+opts.Add("runtime_version", "Runtime library version", None)
+
+env = DefaultEnvironment(options=opts)
+
+print('Platform:', env['PLATFORM'])
 
 # Download runtime if required
 download_wasmer(env, env["download_runtime"], env.get("runtime_version", WASMER_VER_DEFAULT))
 
 # Check platform specifics
-if platform == 'win32':
+if env['PLATFORM'] in ["windows", "win32", "win64"]:
   env.Append(LIBS=["ole32.lib", "runtimeobject.lib"])
   env["LIBRUNTIMESUFFIX"] = ".lib"
   env.Append(CCFLAGS=["-MD"])  # Dynamic CRT used by Wasmer >= v3.2.0
   # if "/MT" in env["CCFLAGS"]: env["CCFLAGS"].remove("/MT")  # Silence MT/MD override warning
   # Force Windows SDK library suffix (see https://github.com/godotengine/godot/issues/23687)
   # env.Append(LINKFLAGS=["bcrypt.lib", "userenv.lib", "ws2_32.lib", "advapi32.lib", "ntdll.lib"])
-  
+
   # env.Append(CPPDEFINES=['WIN32', '_WIN32', '_WINDOWS', '_CRT_SECURE_NO_WARNINGS'])
   env.Append(CCFLAGS=['-W3', '-GR'])
   # env.Append(CXXFLAGS=['/std:c++latest'])

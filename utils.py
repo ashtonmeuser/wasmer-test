@@ -96,9 +96,9 @@ def download_wasmer(env, force=False, version=WASMER_VER_DEFAULT):
             {"wasmer/lib/libwasmer.a": "wasmer/lib/libwasmer.arm64.a"},
         )
         os.system("lipo wasmer/lib/libwasmer.*64.a -output wasmer/lib/libwasmer.a -create")
-    elif env["platform"] in ["linux", "linuxbsd", "x11"]:
+    elif env["platform"] in ["linux", "linuxbsd", "x11", "posix"]:
         _download_tarfile(WASMER_BASE_URL.format(version, "linux-amd64"), "wasmer")
-    elif env["platform"] == "windows":
+    elif env["platform"] in ["windows", "win32", "win64"]:
         if env.get("use_mingw"):
             _download_tarfile(WASMER_BASE_URL.format(version, "windows-gnu64"), "wasmer")
         else:
