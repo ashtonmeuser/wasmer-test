@@ -11,15 +11,17 @@ opts.Add(EnumVariable("wasm_runtime", "Wasm runtime used", "wasmer", ["wasmer", 
 opts.Add(BoolVariable("download_runtime", "(Re)download runtime library", "no"))
 opts.Add("runtime_version", "Runtime library version", None)
 
+# SConstruct environment
 env = DefaultEnvironment(options=opts)
+env['platform'] = {'win32': 'windows', 'darwin': 'macos', 'posix': 'linux'}[env['PLATFORM']]
 
-print('Platform:', env['PLATFORM'])
+print('Platform:', env['platform'])
 
 # Download runtime if required
 download_wasmer(env, env["download_runtime"], env.get("runtime_version", WASMER_VER_DEFAULT))
 
 # Check platform specifics
-if env['PLATFORM'] in ["windows", "win32", "win64"]:
+if env['platform'] == "windows":
   env.Append(LIBS=["ole32.lib", "runtimeobject.lib"])
   env["LIBRUNTIMESUFFIX"] = ".lib"
   env.Append(CCFLAGS=["-MD"])  # Dynamic CRT used by Wasmer >= v3.2.0
