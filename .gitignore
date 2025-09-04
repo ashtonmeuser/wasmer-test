@@ -3,3 +3,5 @@
 wasmer/
 build/
 *.os
+.venv/
+__pycache__
