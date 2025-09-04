@@ -26,7 +26,7 @@ download_wasmer(
 
 # Check platform specifics
 if env["platform"] == "windows":
-    env.Append(LIBS=["ole32.lib", "runtimeobject.lib"])
+    env.Append(LIBS=["ole32.lib", "runtimeobject.lib", "oleaut32.lib"])
     env["LIBRUNTIMESUFFIX"] = ".lib"
     env.Append(CCFLAGS=["-MD"])  # Dynamic CRT used by Wasmer >= v3.2.0
     if "/MT" in env["CCFLAGS"]: env["CCFLAGS"].remove("/MT")  # Silence MT/MD override warning
