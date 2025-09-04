@@ -1,6 +1,4 @@
 import os
-import sys
-from distutils.dir_util import copy_tree, remove_tree
 from utils import download_wasmer, WASMER_VER_DEFAULT
 
 # Initial options inheriting from CLI args
@@ -37,7 +35,7 @@ if env["platform"] == "windows":
 
     # env.Append(CPPDEFINES=['WIN32', '_WIN32', '_WINDOWS', '_CRT_SECURE_NO_WARNINGS'])
     env.Append(CCFLAGS=["-W3", "-GR"])
-    # env.Append(CXXFLAGS=['/std:c++latest'])
+    env.Append(CXXFLAGS=["/std:c++latest"])
     env.Append(LIBS=["bcrypt", "userenv", "ws2_32", "advapi32.lib", "ntdll.lib"])
 
 # Defines for GDExtension specific API
