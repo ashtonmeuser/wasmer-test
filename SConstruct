@@ -16,8 +16,8 @@ env = DefaultEnvironment(options=opts)
 env["platform"] = {"win32": "windows", "darwin": "macos", "posix": "linux"}[
     env["PLATFORM"]
 ]
-
-print("Platform:", env["platform"])
+if env["runtime_version"] == "":
+    del env["runtime_version"]
 
 # Download runtime if required
 download_wasmer(
@@ -29,9 +29,18 @@ if env["platform"] == "windows":
     env.Append(LIBS=["ole32.lib", "runtimeobject.lib", "oleaut32.lib"])
     env["LIBRUNTIMESUFFIX"] = ".lib"
     env.Append(CCFLAGS=["-MD"])  # Dynamic CRT used by Wasmer >= v3.2.0
-    if "/MT" in env["CCFLAGS"]: env["CCFLAGS"].remove("/MT")  # Silence MT/MD override warning
+    if "/MT" in env["CCFLAGS"]:
+        env["CCFLAGS"].remove("/MT")  # Silence MT/MD override warning
     # Force Windows SDK library suffix (see https://github.com/godotengine/godot/issues/23687)
-    env.Append(LINKFLAGS=["bcrypt.lib", "userenv.lib", "ws2_32.lib", "advapi32.lib", "ntdll.lib"])
+    env.Append(
+        LINKFLAGS=[
+            "bcrypt.lib",
+            "userenv.lib",
+            "ws2_32.lib",
+            "advapi32.lib",
+            "ntdll.lib",
+        ]
+    )
     env.Append(CXXFLAGS=["/std:c++latest"])
 
 # Defines for GDExtension specific API
