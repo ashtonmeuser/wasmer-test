@@ -3,3 +3,4 @@
 wasmer/
 build/
 *.os
+.venv/
