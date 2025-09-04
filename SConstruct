@@ -33,8 +33,6 @@ if env['platform'] == "windows":
   env.Append(CCFLAGS=['-W3', '-GR'])
   # env.Append(CXXFLAGS=['/std:c++latest'])
   env.Append(LIBS=['bcrypt', 'userenv', 'ws2_32', 'advapi32.lib', 'ntdll.lib'])
-else:
-  sys.exit(1)
 
 # Defines for GDExtension specific API
 env.Append(CPPDEFINES=["GDEXTENSION", "LIBWASM_STATIC"])
@@ -43,6 +41,7 @@ env.Append(CPPDEFINES=["GDEXTENSION", "LIBWASM_STATIC"])
 runtime_lib = env.File(
     "wasmer/lib/{prefix}{runtime}{suffix}".format(
         prefix=env["LIBPREFIX"],
+        runtime="wasmer",
         suffix=env.get("LIBRUNTIMESUFFIX", env["LIBSUFFIX"]),
     )
 )
