@@ -12,8 +12,6 @@ on:
       runtime_version:
         type: string
         description: 'Version of the runtime to build against'
-        required: false
-        default: 'v6.0.1'
 
 jobs:
   build:
@@ -60,4 +58,4 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build
-        run: scons wasm_runtime=${{ github.event.inputs.wasm_runtime || 'wasmer' }} runtime_version=${{ github.event.inputs.runtime_version || 'v6.0.1' }}
+        run: scons wasm_runtime=${{ github.event.inputs.wasm_runtime || 'wasmer' }} runtime_version=${{ github.event.inputs.runtime_version }}
