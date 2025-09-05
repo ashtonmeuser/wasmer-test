@@ -4,6 +4,11 @@ on:
     branches: [master]
   workflow_dispatch:
     inputs:
+      wasm_runtime:
+        type: string
+        description: 'Wasm runtime to build against'
+        required: false
+        default: 'wasmer'
       runtime_version:
         type: string
         description: 'Version of the runtime to build against'
@@ -55,4 +60,4 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build
-        run: scons runtime_version=${{ github.event.inputs.runtime_version || 'v6.0.1' }}
+        run: scons wasm_runtime=${{ github.event.inputs.wasm_runtime || 'wasmer' }} runtime_version=${{ github.event.inputs.runtime_version || 'v6.0.1' }}
