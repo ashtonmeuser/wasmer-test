@@ -1,21 +1,28 @@
 #include <stdio.h>
-#include "wasmer.h"
+#include "wasm.h"
+
+#define FAIL(message) do { printf("> Error %s!\n", message); return 1; } while (0)
 
 int main(int argc, const char* argv[]) {
-    const char *wat_string =
-        "(module\n"
-        "  (type $add_one_t (func (param i32) (result i32)))\n"
-        "  (func $add_one_f (type $add_one_t) (param $value i32) (result i32)\n"
-        "    local.get $value\n"
-        "    i32.const 1\n"
-        "    i32.add)\n"
-        "  (export \"add_one\" (func $add_one_f)))";
+    // Read WebAssembly binary file
+    FILE* file = fopen("test.wasm", "rb");
+    if (!file) {
+        FAIL("loading module file");
+    }
 
-    wasm_byte_vec_t wat;
-    wasm_byte_vec_new(&wat, strlen(wat_string), wat_string);
+    // Get file size
+    fseek(file, 0L, SEEK_END);
+    size_t file_size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    // Read file into wasm_bytes
     wasm_byte_vec_t wasm_bytes;
-    wat2wasm(&wat, &wasm_bytes);
-    wasm_byte_vec_delete(&wat);
+    wasm_byte_vec_new_uninitialized(&wasm_bytes, file_size);
+    if (fread(wasm_bytes.data, 1, file_size, file) != file_size) {
+        fclose(file);
+        FAIL("loading module contents");
+    }
+    fclose(file);
 
     printf("Creating the store...\n");
     wasm_engine_t* engine = wasm_engine_new();
@@ -25,9 +32,7 @@ int main(int argc, const char* argv[]) {
     wasm_module_t* module = wasm_module_new(store, &wasm_bytes);
 
     if (!module) {
-        printf("> Error compiling module!\n");
-
-        return 1;
+        FAIL("compiling module");
     }
 
     wasm_byte_vec_delete(&wasm_bytes);
@@ -39,9 +44,7 @@ int main(int argc, const char* argv[]) {
     wasm_instance_t* instance = wasm_instance_new(store, module, &imports, NULL);
 
     if (!instance) {
-      printf("> Error instantiating module!\n");
-
-      return 1;
+        FAIL("instantiating module");
     }
 
     printf("Retrieving exports...\n");
@@ -49,16 +52,12 @@ int main(int argc, const char* argv[]) {
     wasm_instance_exports(instance, &exports);
 
     if (exports.size == 0) {
-        printf("> Error accessing exports!\n");
-
-        return 1;
+        FAIL("accessing exports");
     }
 
     const wasm_func_t* add_one_func = wasm_extern_as_func(exports.data[0]);
     if (add_one_func == NULL) {
-        printf("> Error accessing export!\n");
-
-        return 1;
+        FAIL("accessing export");
     }
 
     wasm_module_delete(module);
@@ -71,9 +70,7 @@ int main(int argc, const char* argv[]) {
     wasm_val_vec_t results = WASM_ARRAY_VEC(results_val);
 
     if (wasm_func_call(add_one_func, &args, &results)) {
-        printf("> Error calling function!\n");
-
-        return 1;
+        FAIL("calling function");
     }
 
     printf("Results of `add_one`: %d\n", results_val[0].of.i32);
